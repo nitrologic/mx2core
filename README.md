@@ -1,4 +1,4 @@
-# monkey2nitro
+# mx2core
 
 a private mojolabs monkey2 fork
 
@@ -10,6 +10,7 @@ original source courtesy blitz-research 3 January 2018
 
 # history
 
+* rename project to mx2core
 * rename project to monkey2nitro
 * snapshot mx2cc, core, mojo
 * link to separate off-repos bootstrap bin
