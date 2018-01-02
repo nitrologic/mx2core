@@ -1,2 +1,7 @@
-# mx2
-private monkey2 repos
+# monkey2nitro
+
+a private mojolabs monkey2 fork
+
+# history
+
+* rename from mx2 
