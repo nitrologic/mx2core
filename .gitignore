@@ -1,5 +1,7 @@
 /bin
 /pub
+/mojo
+/editor
 /tmp
 *.products/
 *.buildv*/
