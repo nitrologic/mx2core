@@ -1,0 +1,5 @@
+/bin
+/pub
+/tmp
+*.products/
+*.buildv*/

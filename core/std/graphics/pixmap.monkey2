@@ -505,8 +505,9 @@ Class Pixmap Extends Resource
 	
 	#End
 	Method Save:Bool( path:String )
-	
-		Return SavePixmap( Self,path )
+'TODO moving to pub
+'		Return SavePixmap( Self,path )
+		Return false
 	End
 	
 	#rem monkeydoc Loads a pixmap from a file.
@@ -520,11 +521,12 @@ Class Pixmap Extends Resource
 	#end
 	Function Load:Pixmap( path:String,format:PixelFormat=Null,pmAlpha:Bool=False )
 
-		Local pixmap:=pixmaploader.LoadPixmap( path,format )
+		Local pixmap:Pixmap
 		
-		If Not pixmap And Not ExtractRootDir( path ) pixmap=pixmaploader.LoadPixmap( "image::"+path,format )
-		
-		If pixmap And pmAlpha pixmap.PremultiplyAlpha()
+'TODO moving to pub
+		'=pixmaploader.LoadPixmap( path,format )		
+		'If Not pixmap And Not ExtractRootDir( path ) pixmap=pixmaploader.LoadPixmap( "image::"+path,format )		
+		'If pixmap And pmAlpha pixmap.PremultiplyAlpha()
 		
 		Return pixmap
 	End

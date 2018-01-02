@@ -1,6 +1,8 @@
 
 Namespace std.stream
 
+using std.filesystem
+
 Using libc
 
 #rem monkeydoc FileStream class.

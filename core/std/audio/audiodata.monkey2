@@ -111,7 +111,8 @@ Class AudioData Extends Resource
 	
 		Select ExtractExt( path ).ToLower()
 		Case ".wav" Return LoadAudioData_WAV( path )
-		Case ".ogg" Return LoadAudioData_OGG( path )
+' TODO moving to pub		
+'		Case ".ogg" Return LoadAudioData_OGG( path )
 		End
 		
 		Return Null

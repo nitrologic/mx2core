@@ -2,17 +2,6 @@
 Namespace std
 
 #Import "<libc.monkey2>"
-#Import "<stb-image>"
-#Import "<stb-image-write>"
-#import "<stb-vorbis>"
-#Import "<miniz>"
-
-#If __MOBILE_TARGET__
-#Import "<sdl2>"
-#If __TARGET__="android"
-#Import "<jni>"
-#Endif
-#Endif
 
 #Import "collections/container"
 #Import "collections/stack"
@@ -53,14 +42,14 @@ Namespace std
 
 #Import "graphics/pixelformat"
 #Import "graphics/pixmap"
-#Import "graphics/pixmaploader"
-#Import "graphics/pixmapsaver"
+'#Import "graphics/pixmaploader"
+'#Import "graphics/pixmapsaver"
 #Import "graphics/color"
 
 #import "audio/audioformat"
 #import "audio/audiodata"
 #import "audio/load_wav"
-#import "audio/load_vorbis"
+'#import "audio/load_vorbis"
 
 #Import "async/async"
 #Import "time/time"
@@ -76,7 +65,6 @@ Namespace std
 #Import "misc/stringio"
 #Import "misc/json"
 #Import "misc/jsonify"
-#Import "misc/zipfile"
 #Import "misc/base64"
 #Import "misc/digest"
 
