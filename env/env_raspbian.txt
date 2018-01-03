@@ -1,0 +1,17 @@
+
+'***** RASPBIAN TARGET *****
+
+'LD options
+MX2_LD_OPTS_RASPBIAN=-s -L/opt/vc/lib -lbcm_host -lvcos -lvchiq_arm
+MX2_LD_OPTS_RASPBIAN_DEBUG=
+MX2_LD_OPTS_RASPBIAN_RELEASE=
+
+'C compiler options
+MX2_CC_OPTS_RASPBIAN=-std=gnu99 -I/opt/vc/include -I/opt/vc/include/interface/vmcs_host/linux -I/opt/vc/include/interface/vcos/pthreads
+MX2_CC_OPTS_RASPBIAN_DEBUG=-Os
+MX2_CC_OPTS_RASPBIAN_RELEASE=-O3 -DNDEBUG
+
+'C++ compiler options
+MX2_CPP_OPTS_RASPBIAN=-std=c++11 -I/opt/vc/include  -I/opt/vc/include/interface/vmcs_host/linux -I/opt/vc/include/interface/vcos/pthreads
+MX2_CPP_OPTS_RASPBIAN_DEBUG=-Os
+MX2_CPP_OPTS_RASPBIAN_RELEASE=-O3 -DNDEBUG
