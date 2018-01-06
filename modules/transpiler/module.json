@@ -1,0 +1,8 @@
+{
+	"module":"transpiler",
+	"about":"original monkey2 mx2cc transpiler",
+	"author":"Mark Sibly",
+	"version":"1.1.09",
+	"support":"http://monkeycoder.co.nz",
+	"depends":["std"]
+}
