@@ -3,6 +3,7 @@ Namespace mx2
 
 Class BuildProduct
 
+	Field compiler:Toolchain
 	Field module:Module
 	Field opts:BuildOpts
 	Field imports:=New Stack<Module>
@@ -23,7 +24,8 @@ Class BuildProduct
 	
 	Field reflects:=New StringStack
 	
-	Method New( module:Module,opts:BuildOpts )
+	Method New( toolchain:Toolchain, module:Module,opts:BuildOpts )
+		Self.compiler=toolchain
 		Self.module=module
 		Self.opts=opts
 		
@@ -40,19 +42,15 @@ Class BuildProduct
 	End
 
 	method Assemble:Int(cmd:String,fstderr:String)	
-		Return 0
-'		Local result:=system( cmd+" 2>"+fstderr )			
-'		Return result
+		Return compiler.Assemble(cmd,fstderr)
 	End
 	
 	Method Compile:Int(cmd:String,fstderr:String)
-		Return 0
-'		Local result:=system( cmd+" 2>"+fstderr )			
-'		Return result
+		Return compiler.Compile(cmd,fstderr)
 	End
 	
 	Method Archive:Int(cmd:String)
-		Return 0
+		Return compiler.Archive(cmd)
 	End
 
 	Method Build()
@@ -310,9 +308,9 @@ Class GccBuildProduct Extends BuildProduct
 	Field AR_CMD:=""
 	Field LD_CMD:=""
 	
-	Method New( module:Module,opts:BuildOpts )
+	Method New( toolchain:Toolchain, module:Module,opts:BuildOpts )
 		
-		Super.New( module,opts )
+		Super.New( toolchain, module,opts )
 		
 		Local target:="_"+opts.target.ToUpper()
 		Local config:="_"+opts.config.ToUpper()
@@ -496,13 +494,9 @@ Class GccBuildProduct Extends BuildProduct
 			If isasm
 				cmd+=" -Fo~q"+obj+"~q ~q"+src+"~q"
 		' simon come here			
-				Print "AssembleSource:"+src			
-				Print "cmd:"+cmd
 				Local fstderr:=AllocTmpFile( "stderr" )
-' simon
 				Assemble(cmd,fstderr)
 '				Exec( cmd,opts.toolchain="msvc" )
-
 				Return obj
 			Endif
 			
@@ -512,14 +506,10 @@ Class GccBuildProduct Extends BuildProduct
 			
 			If opts.verbose>2 Print cmd
 				
-			Local fstderr:=AllocTmpFile( "stderr" )
-			
-			Print "CompileSource.1:"+src			
-			Print "cmd:"+cmd
-			
-			If Compile(cmd,fstderr)
-			
-'			If system( cmd+" 2>"+fstderr )
+			' simon come here
+			Local fstderr:=AllocTmpFile( "stderr" )			
+			If Compile(cmd,fstderr)			
+			' If system( cmd+" 2>"+fstderr )
 
 				Local buf:=New StringStack
 				For Local line:=Eachin LoadString( fstdout,True ).Split( "~n" )
@@ -566,11 +556,9 @@ Class GccBuildProduct Extends BuildProduct
 		cmd+=" -o ~q"+obj+"~q ~q"+src+"~q"
 
 		' simon come here			
-		Print "CompileSource.2:"+src			
-		Print "cmd:"+cmd
 		Local fstderr:=AllocTmpFile( "stderr" )
 		Compile(cmd,fstderr)
-'		Exec( cmd )
+		' Exec( cmd )
 			
 		Return obj
 	End
@@ -641,13 +629,9 @@ Class GccBuildProduct Extends BuildProduct
 #Endif
 		Endif
 
-' simon come here
-		
-		Print "Archiving "+cmd
-		
-		Archive(cmd)
-		
-'		Exec( cmd,opts.toolchain="msvc" )
+		' simon come here
+		Archive(cmd)		
+		' Exec( cmd,opts.toolchain="msvc" )
 			
 	End
 	
@@ -803,7 +787,7 @@ Class IosBuildProduct Extends GccBuildProduct
 
 	Method New( module:Module,opts:BuildOpts )
 	
-		Super.New( module,opts )
+		Super.New( Null, module,opts )
 	End
 	
 	Method BuildApp( objs:StringStack ) Override
@@ -871,7 +855,7 @@ Class AndroidBuildProduct Extends BuildProduct
 
 	Method New( module:Module,opts:BuildOpts )
 
-		Super.New( module,opts )
+		Super.New( Null, module,opts )
 	End
 	
 	Method Build( srcs:StringStack ) Override

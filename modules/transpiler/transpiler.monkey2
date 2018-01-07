@@ -3,6 +3,7 @@ Namespace mx2cc
 
 #Import "<std>"
 
+#Import "toolchain"
 #Import "mx2"
 
 #Import "newdocs/docsnode"
@@ -30,8 +31,8 @@ Const TestArgs:="mx2cc makeapp -clean -config=debug src/mx2cc/test.monkey2"
 
 Class Transpiler
 	
-	Field TempDir:String
-	Field VisualStudioPath:String
+	Field tempDir:String
+	Field compiler:Toolchain
 
 	Function DefaultOpts:BuildOpts()
 		Local opts:=New BuildOpts	
@@ -40,22 +41,14 @@ Class Transpiler
 		Return opts
 	End
 
-	Method New(tempdir:String, vs140path:String)
-		TempDir=tempdir
-		VisualStudioPath=vs140path
-		'Set aside 64M for GC!
+	Method New(toolchain:Toolchain, tempdir:String)
+		Self.compiler=toolchain
+		Self.tempDir=tempdir
+		'Set aside 64M for GC
 		GCSetTrigger( 64*1024*1024 )
 		ModDirs()
 	End
-	
-	Property Compiler:String()
-		Local temp:=TempDir + "\getcl.txt"
-		Local cmd:="call ~q"+VisualStudioPath+"VsDevCmd.bat~q && (cl > ~q"+temp+"~q 2>&1)"
-		Local result:=libc.system(cmd)
-		If result Return ""
-		Return std.stringio.LoadString(temp.Replace("\","/"))
-	End
-		
+			
 	Method Version:String()
 		Return MX2CC_VERSION+MX2CC_VERSION_EXT
 	End
@@ -101,7 +94,7 @@ Class Transpiler
 		Return usage.Join("~n")
 	End
 	
-	Function MakeApp:Bool( args:String[] )
+	Method MakeApp:Bool( args:String[] )
 	
 		Local opts:=DefaultOpts()
 		opts.productType="app"
@@ -131,7 +124,7 @@ Class Transpiler
 		
 		Print "Making app '"+opts.mainSource+"' ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+")"
 	
-		New BuilderInstance( opts )
+		New BuilderInstance( compiler, opts )
 		
 		Builder.Parse()
 		If opts.passes=1 
@@ -167,7 +160,7 @@ Class Transpiler
 		Return True
 	End
 		
-	Function MakeMods:Bool( dirs:String[], args:String[] )
+	Method MakeMods:Bool( dirs:String[], args:String[] )
 		
 		Print "MakeMods x " + dirs.Length
 		Module.Dirs=dirs
@@ -208,7 +201,7 @@ Class Transpiler
 			opts.mainSource=RealPath( path )
 			opts.target=target
 			
-			New BuilderInstance( opts )
+			New BuilderInstance( compiler,opts )
 			
 			Builder.Parse()
 			If Builder.errors.Length errs+=1;Continue
@@ -229,7 +222,7 @@ Class Transpiler
 		Return errs=0
 	End
 	
-	Function MakeDocs:Bool( args:String[] )
+	Method MakeDocs:Bool( args:String[] )
 	
 		Local opts:=DefaultOpts()
 		opts.productType="module"
@@ -272,7 +265,7 @@ Class Transpiler
 			
 			opts.mainSource=RealPath( path )
 			
-			New BuilderInstance( opts )
+			New BuilderInstance( compiler, opts )
 	
 			Builder.Parse()
 			If Builder.errors.Length errs+=1;Continue

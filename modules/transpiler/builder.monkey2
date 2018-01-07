@@ -38,6 +38,8 @@ Class BuildOpts
 End
 
 Class BuilderInstance
+	
+	Field compiler:Toolchain
 
 	Field errors:=New Stack<ErrorEx>
 
@@ -75,7 +77,8 @@ Class BuilderInstance
 
 	Field MX2_LIBS:=New StringStack
 	
-	Method New( opts:BuildOpts )
+	Method New( toolchain:Toolchain, opts:BuildOpts )
+		Self.compiler=toolchain
 	
 		Self.opts=opts
 		
@@ -151,7 +154,7 @@ Class BuilderInstance
 		Case "ios"
 			product=New IosBuildProduct( module,opts )
 		Default
-			product=New GccBuildProduct( module,opts )
+			product=New GccBuildProduct( compiler,module,opts )
 		End
 		
 		mainModule=module
