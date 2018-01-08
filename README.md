@@ -13,15 +13,14 @@ original source courtesy blitz-research 3 January 2018
 
 # todo
 
-* Use VS140COMNTOOLS environment variable to configure mx2cc.
-* Provide lab guidance for installing and using MSVC.
 * Integrate loader, ted2go, mx2cc and steamworks into single mojolab application.
+* Provide lab guidance for installing and using MSVC.
 
 # history
 
+* Use VS140COMNTOOLS environment variable to configure mx2cc.
 * remove irc
 * start mojolab root app
 * rename project to mx2core
-* rename project to monkey2nitro
 * snapshot mx2cc, core, mojo
 * link to separate off-repos bootstrap bin

@@ -501,8 +501,10 @@ Class GccBuildProduct Extends BuildProduct
 			Endif
 			
 			Local fstdout:=AllocTmpFile( "stdout" )
-			
-			cmd+=" -showIncludes -Fo~q"+obj+"~q ~q"+src+"~q >"+fstdout
+
+' simon was here			
+'			cmd+=" -showIncludes -Fo~q"+obj+"~q ~q"+src+"~q >"+fstdout
+			cmd+=" -showIncludes -Fo~q"+obj+"~q ~q"+src+"~q "+fstdout
 			
 			If opts.verbose>2 Print cmd
 				
@@ -595,7 +597,7 @@ Class GccBuildProduct Extends BuildProduct
 		Next
 		If GetFileTime( output )>maxObjTime Return
 		
-		If opts.verbose>=0 Print "Archiving "+output+"..."
+'		If opts.verbose>=0 Print "Archiving "+output+"..."
 		
 		DeleteFile( output )
 		

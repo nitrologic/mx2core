@@ -1,32 +1,69 @@
 #Import "<transpiler>"
 
-
-
+#if __TARGET__="macos"
 Global TempPath:="/tmp"
 Global ToolPath:="/tmp"
+#else
+Global TempPath:=std.filesystem.GetEnv("TEMP")
+Global ToolPath:=std.filesystem.GetEnv("VS140COMNTOOLS")
+#endif
 
 Class VisualStudio Implements mx2.Toolchain
+
+	Method New()
+		std.filesystem.SetEnv("MX2_CPP_OPTS_MSVC","-EHsc -W0 -MT -utf-8")
+		std.filesystem.SetEnv("MX2_CPP_OPTS_MSVC_DEBUG","-O1")
+		std.filesystem.SetEnv("MX2_CPP_OPTS_MSVC_RELEASE","-O2 -DNDEBUG")
+	End
 		
-	Property Compiler:String()
+	Method Invoke:Int(command:String)
 		Local vsdevcmd:=ToolPath+"VsDevCmd.bat"
-		Local temp:=TempPath + "\getcl.txt"
-		Local cmd:="call ~q"+vsdevcmd+"~q && (cl > ~q"+temp+"~q 2>&1)"
+		Local cmd:="call ~q"+vsdevcmd+"~q && ("+command+")"
+		Print cmd
 		Local result:=libc.system(cmd)
+		Print result
+		Return result
+	End	
+			
+	Method CLAbout:String()
+		Local temp:=TempPath + "\getcl.txt"
+		Local result:=Invoke("cl > ~q"+temp+"~q 2>&1")
 		If result Return ""
-		Return std.stringio.LoadString(temp.Replace("\","/"))
+		Local about:=std.stringio.LoadString(temp.Replace("\","/"))
+		about=about.Replace("~r~n","~n")
+		Return about
 	End
 
-	Method About:String()		
-		Return 0
+	Method CLHelp:String()
+		Local temp:=TempPath + "\getcl.txt"
+		Local result:=Invoke("cl -help > ~q"+temp+"~q 2>&1")
+		If result Return ""
+		Local about:=std.stringio.LoadString(temp.Replace("\","/"))
+		about=about.Replace("~r~n","~n")
+		Return about
 	End
+
+	Method About:String()
+'[]		Local info:=CLAbout()
+		Local info:=CLHelp()
+'		Local lines:=info.Split("~r~n")
+'		If lines.Length Return lines[0]
+		Return info
+	End
+
 	Method Assemble:Int(cmd:String,fstderr:String)	
-		Return 0
+'		Print "ASSEMBLE"
+		Return Invoke(cmd)
 	End
+
 	Method Compile:Int(cmd:String,fstderr:String)
-		Return 0
+'		Print "COMPILE"
+		Return Invoke(cmd)
 	End
+	
 	Method Archive:Int(cmd:String)
-		Return 0
+'		Print "ARCHIVE"
+		Return Invoke(cmd)
 	End
 
 '		Local result:=system( cmd+" 2>"+fstderr )			
@@ -58,7 +95,7 @@ Class Xcode Implements mx2.Toolchain
 	End
 End
 
-Function Main()
+Function MacMain()
 	
 	Print std.filesystem.AppDir()
 	Print std.filesystem.CurrentDir()
@@ -74,4 +111,51 @@ Function Main()
 	Local args:=New String[]("std","libc","monkey","transpiler")
 
 	mx2.MakeMods(dirs,args)
+End
+
+Function ModulePaths:String[](path:String)
+	Local result:=New std.collections.List<String>
+	result.Add(path+"modules/")
+	Return result.ToArray()
+End
+
+Function MonkeyPath:String(path:String)
+	While path
+		Local filepath:=path+"/modules.json"
+		If std.filesystem.GetFileType(filepath)=1
+			Exit
+		Endif
+		path=std.filesystem.RealPath(path+"/../")
+	Wend
+	Return path
+End
+
+
+Function Main()
+	
+	Local cl:=New VisualStudio()
+	Print "Toolchain:"+cl.About()
+
+	Local mx2:=New mx2cc.Transpiler(cl,TempPath)
+
+	Local mx2Path:=MonkeyPath(std.filesystem.AppDir())	
+	Local modulePaths:=ModulePaths(mx2Path)
+
+'	std.filesystem.ChangeDir(mx2Path)
+
+	Print "AppDir="+std.filesystem.AppDir()
+	Print "CurrentDir="+std.filesystem.CurrentDir()
+
+'	Local home:="/Users/simon/monkey2/modules/"
+'	Local home:=std.filesystem.AppDir()+"../../../modules/"	
+		
+'	Local modules:=New String[]("monkey","libc","std","transpiler")
+	Local modules:=New String[]("monkey","libc","std")
+
+	Local src:=mx2Path+"mx2/hello.monkey2"
+	Local appargs:=New String[](src)
+
+	mx2.MakeMods(modulePaths,modules)
+
+	mx2.MakeApp(modulePaths,appargs)
 End

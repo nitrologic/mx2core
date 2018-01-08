@@ -1,0 +1,21 @@
+Build error: System command failed:
+
+cl -c -EHs -W0 -MT -utf-8 -O2 -DNDEBUG -I"C:/nitrologic/mx2core/modules/" -I"C:/nitrologic/mx2core/modules/monkey/native" -I"C:/nitrologic/mx2core/mx2/" -DBB_NEWREFLECTION -I"C:/nitrologic/mx2core/mx2/hello.buildv1.1.09/windows_release_msvc/build/" -showIncludes -Fo"C:/nitrologic/mx2core/mx2/hello.buildv1.1.09/windows_release_msvc/build/_1include_2_0r.cpp_r.obj" "C:/nitrologic/mx2core/mx2/hello.buildv1.1.09/windows_release_msvc/include/_r.cpp" >tmp/stdout1.txt
+
+_r.cpp
+C:/nitrologic/mx2core/mx2/hello.buildv1.1.09/windows_release_msvc/include/_r.cpp(2): 
+fatal error C1083: Cannot open include file: 'bbdeclinfo_r.h': No such file or directory
+
+
+
+***** Uncaught Monkey 2 Throwable *****
+
+
+Finished debugging app.
+
+
+call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\VsDevCmd.bat" && (cl -c -EHs -W0 -MT -utf-8 -O2 -DNDEBUG -I"C:/nitrologic/mx2core/modules/" -I"C:/nitrologic/mx2core/modules/monkey/native" -Fo"C:/nitrologic/mx2core/modules/std/std.buildv1.1.09/windows_release_msvc/build/std_0misc_02chartype.cpp.obj" "C:/nitrologic/mx2core/modules/std/std.buildv1.1.09/windows_release_msvc/src/std_misc_2chartype.cpp")
+
+
+
+cl -c -EHs -W0 -MT -utf-8 -O2 -DNDEBUG -I"C:/nitrologic/mx2core/modules/" -I"C:/nitrologic/mx2core/modules/monkey/native" -Fo"C:/nitrologic/mx2core/modules/std/std.buildv1.1.09/windows_release_msvc/build/std_0misc_02chartype.cpp.obj" "C:/nitrologic/mx2core/modules/std/std.buildv1.1.09/windows_release_msvc/src/std_misc_2chartype.cpp"
