@@ -19,9 +19,9 @@ Class VisualStudio Implements mx2.Toolchain
 	Method Invoke:Int(command:String)
 		Local vsdevcmd:=ToolPath+"VsDevCmd.bat"
 		Local cmd:="call ~q"+vsdevcmd+"~q && ("+command+")"
-		Print cmd
+'		Print cmd
 		Local result:=libc.system(cmd)
-		Print result
+		If result Print cmd + " returned " + result
 		Return result
 	End	
 			

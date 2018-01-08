@@ -38,6 +38,7 @@ Class Transpiler
 		Local opts:=New BuildOpts	
 		opts.toolchain="msvc"
 		opts.target="windows"
+		opts.config="release"
 		Return opts
 	End
 
@@ -45,7 +46,7 @@ Class Transpiler
 		Self.compiler=toolchain
 		Self.tempDir=tempdir
 		'Set aside 64M for GC
-		GCSetTrigger( 64*1024*1024 )
+		GCSetTrigger( 128*1024*1024 )
 		ModDirs()
 	End
 			
@@ -94,12 +95,12 @@ Class Transpiler
 		Return usage.Join("~n")
 	End
 	
-	Method MakeApp:Bool( args:String[] )
+	Method MakeApp:Bool( dirs:String[], args:String[] )
+
+		Module.Dirs=dirs
 	
 		Local opts:=DefaultOpts()
 		opts.productType="app"
-		opts.target="desktop"
-		opts.config="debug"
 		opts.clean=False
 		opts.fast=True
 		opts.verbose=0
@@ -167,9 +168,7 @@ Class Transpiler
 	
 		Local opts:=DefaultOpts()
 		opts.productType="module"
-		opts.config="debug"
 		opts.clean=True
-'		opts.clean=False
 		opts.fast=True
 		opts.verbose=0
 		opts.passes=4		

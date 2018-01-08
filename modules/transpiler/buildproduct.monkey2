@@ -97,7 +97,7 @@ Class BuildProduct
 		Next
 		
 		srcs.AddAll( SRC_FILES )
-		
+
 		Build( srcs )
 	End
 	
@@ -109,10 +109,9 @@ Class BuildProduct
 
 	Protected
 	
-	Method AllocTmpFile:String( kind:String )
-	
+	Method AllocTmpFile:String( kind:String )	
 		' simon come here
-		
+#rem		
 		CreateDir( "tmp" )
 
 		For Local i:=1 Until 10
@@ -122,8 +121,8 @@ Class BuildProduct
 		Next
 		
 		Throw New BuildEx( "Can't allocate tmp file" )
-		
-		Return ""
+#end		
+		Return "C:\simon.txt"
 	End
 	
 	Method Exec:Bool( cmd:String,eatstdout:Bool=False )
@@ -406,7 +405,7 @@ Class GccBuildProduct Extends BuildProduct
 			
 			isasm=True
 		End
-			
+					
 		Local rfile:=src.EndsWith( "/_r.cpp" )
 
 '		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cacheDir ) )
@@ -486,6 +485,7 @@ Class GccBuildProduct Extends BuildProduct
 			DeleteFile( deps )
 
 		Endif
+				
 			
 		If opts.verbose>0 Print StripDir( src )
 				
@@ -500,17 +500,25 @@ Class GccBuildProduct Extends BuildProduct
 				Return obj
 			Endif
 			
-			Local fstdout:=AllocTmpFile( "stdout" )
 
-' simon was here			
+			cmd+=" -Fo~q"+obj+"~q ~q"+src+"~q"
+
+			Local fstdout:=AllocTmpFile( "stdout" )			
 '			cmd+=" -showIncludes -Fo~q"+obj+"~q ~q"+src+"~q >"+fstdout
-			cmd+=" -showIncludes -Fo~q"+obj+"~q ~q"+src+"~q "+fstdout
 			
 			If opts.verbose>2 Print cmd
 				
 			' simon come here
 			Local fstderr:=AllocTmpFile( "stderr" )			
-			If Compile(cmd,fstderr)			
+
+			Local fail:=Compile(cmd,fstderr)			
+			
+			
+			If fail
+				Throw New BuildEx( "compiler failure code "+fail )
+'				Print "SIMON COME HERE"
+				
+'			If Compile(cmd,fstderr)			
 			' If system( cmd+" 2>"+fstderr )
 
 				Local buf:=New StringStack
@@ -549,9 +557,9 @@ Class GccBuildProduct Extends BuildProduct
 			Local str:=buf.Join( "~n" )
 			
 '			Print "deps="+str
-			
+		
 			SaveString( str,deps )
-			
+
 			Return obj
 		Endif
 
@@ -559,6 +567,7 @@ Class GccBuildProduct Extends BuildProduct
 
 		' simon come here			
 		Local fstderr:=AllocTmpFile( "stderr" )
+
 		Compile(cmd,fstderr)
 		' Exec( cmd )
 			
@@ -570,11 +579,12 @@ Class GccBuildProduct Extends BuildProduct
 		Local objs:=New StringStack
 		
 		For Local src:=Eachin srcs
-		
+'			Print "src"+src		
 			objs.Push( CompileSource( src ) )
 		Next
 		
 		objs.AddAll( OBJ_FILES )
+
 		
 		If opts.productType="module"
 		
@@ -584,6 +594,7 @@ Class GccBuildProduct Extends BuildProduct
 		
 			BuildApp( objs )
 		End
+
 	End
 	
 	Method BuildModule( objs:StringStack )
@@ -597,7 +608,9 @@ Class GccBuildProduct Extends BuildProduct
 		Next
 		If GetFileTime( output )>maxObjTime Return
 		
-'		If opts.verbose>=0 Print "Archiving "+output+"..."
+		If opts.verbose>=0 Print "Archiving..."
+			
+'			+output+"..."
 		
 		DeleteFile( output )
 		
@@ -610,12 +623,14 @@ Class GccBuildProduct Extends BuildProduct
 		
 			cmd="libtool -o ~q"+output+"~q"+args
 			
-		Else If opts.toolchain="msvc"
-			
-			Local tmp:=AllocTmpFile( "libFiles" )
-			SaveString( args,tmp )
-			
-			cmd="lib -out:~q"+output+"~q @~q"+tmp+"~q"
+		Else If opts.toolchain="msvc"			
+
+'			Local tmp:=AllocTmpFile( "libFiles" )
+'			SaveString( args,tmp )			
+'			cmd="lib -out:~q"+output+"~q @~q"+tmp+"~q"
+			cmd="lib -out:~q"+output+"~q "+args
+'			Print "args="+args.Replace("~q ~q", "~q~n~q")
+			Print "cmd="+cmd
 
 		Else
 
