@@ -54,6 +54,8 @@ Class Module
 		outputDir=buildDir+profile+"/"
 		
 		cacheDir=outputDir+"build/"
+		
+		Print "************* cacheDir:"+cacheDir
 
 		hfileDir=outputDir+"include/"
 		

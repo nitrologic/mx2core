@@ -175,7 +175,8 @@ Function MakeApp:Bool( args:String[] )
 
 	Local opts:=New BuildOpts
 	opts.productType="app"
-	opts.target="desktop"
+'	opts.target="desktop"
+	opts.target="windows"
 	opts.config="debug"
 	opts.clean=False
 	opts.fast=True
@@ -241,7 +242,7 @@ Function MakeMods:Bool( args:String[] )
 
 	Local opts:=New BuildOpts
 	opts.productType="module"
-	opts.target="desktop"
+	opts.target="windows"
 	opts.config="debug"
 	opts.clean=False
 	opts.fast=True

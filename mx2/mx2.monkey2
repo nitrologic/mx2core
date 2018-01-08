@@ -1,5 +1,7 @@
 #Import "<transpiler>"
 
+#Import "process.monkey2"
+
 #if __TARGET__="macos"
 Global TempPath:="/tmp"
 Global ToolPath:="/tmp"
@@ -19,9 +21,8 @@ Class VisualStudio Implements mx2.Toolchain
 	Method Invoke:Int(command:String)
 		Local vsdevcmd:=ToolPath+"VsDevCmd.bat"
 		Local cmd:="call ~q"+vsdevcmd+"~q && ("+command+")"
-'		Print cmd
-		Local result:=libc.system(cmd)
-		If result Print cmd + " returned " + result
+		Local result:=Process.Invoke(cmd)
+'		If result Print cmd + " returned " + result
 		Return result
 	End	
 			
@@ -51,16 +52,33 @@ Class VisualStudio Implements mx2.Toolchain
 		Return info
 	End
 
-	Method Assemble:Int(cmd:String,fstderr:String)	
+	Method Assemble:Int(cmd:String)	
 '		Print "ASSEMBLE"
 		Return Invoke(cmd)
 	End
 
-	Method Compile:Int(cmd:String,fstderr:String)
-'		Print "COMPILE"
-		Return Invoke(cmd)
+	Method Compile:Int(cmd:String)
+		Local temp:=TempPath + "\cl.txt"
+		Local result:=Invoke(cmd+" > ~q"+temp+"~q 2>&1")
+		If result
+			Local about:=std.stringio.LoadString(temp.Replace("\","/"))
+			about=about.Replace("~r~n","~n")
+			Print about
+		Endif
+		Return result
 	End
 	
+	Method Link:Int(cmd:String)
+		Local temp:=TempPath + "\link.txt"
+		Local result:=Invoke(cmd+" > ~q"+temp+"~q 2>&1")
+		If result
+			Local about:=std.stringio.LoadString(temp.Replace("\","/"))
+			about=about.Replace("~r~n","~n")
+			Print about
+		Endif
+		Return result
+	End
+
 	Method Archive:Int(cmd:String)
 '		Print "ARCHIVE"
 		Return Invoke(cmd)
@@ -84,13 +102,16 @@ Class Xcode Implements mx2.Toolchain
 	Method About:String()		
 		Return 0
 	End
-	Method Assemble:Int(cmd:String,fstderr:String)	
+	Method Assemble:Int(cmd:String)	
 		Return 0
 	End
-	Method Compile:Int(cmd:String,fstderr:String)
+	Method Compile:Int(cmd:String)
 		Return 0
 	End
 	Method Archive:Int(cmd:String)
+		Return 0
+	End
+	Method Link:Int(cmd:String)
 		Return 0
 	End
 End
@@ -155,7 +176,7 @@ Function Main()
 	Local src:=mx2Path+"mx2/hello.monkey2"
 	Local appargs:=New String[](src)
 
-	mx2.MakeMods(modulePaths,modules)
+'	mx2.MakeMods(modulePaths,modules)
 
 	mx2.MakeApp(modulePaths,appargs)
 End

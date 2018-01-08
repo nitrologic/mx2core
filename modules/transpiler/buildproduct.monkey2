@@ -41,16 +41,20 @@ Class BuildProduct
 		CPP_OPTS+=copts
 	End
 
-	method Assemble:Int(cmd:String,fstderr:String)	
-		Return compiler.Assemble(cmd,fstderr)
+	Method Assemble:Int(cmd:String)	
+		Return compiler.Assemble(cmd)
 	End
 	
-	Method Compile:Int(cmd:String,fstderr:String)
-		Return compiler.Compile(cmd,fstderr)
+	Method Compile:Int(cmd:String)
+		Return compiler.Compile(cmd)
 	End
 	
 	Method Archive:Int(cmd:String)
 		Return compiler.Archive(cmd)
+	End
+
+	Method Link:Int(cmd:String)
+		Return compiler.Link(cmd)
 	End
 
 	Method Build()
@@ -61,7 +65,7 @@ Class BuildProduct
 			
 		Local srcs:=New StringStack
 
-		If opts.productType="app"
+		If opts.productType="app" And opts.reflection
 
 			CC_OPTS+=" -DBB_NEWREFLECTION"
 			CPP_OPTS+=" -DBB_NEWREFLECTION"			
@@ -81,6 +85,8 @@ Class BuildProduct
 			
 			Local rhead:=buf.Join( "~n" )
 			
+			Print "saving to "+module.cacheDir+"_r.h rhead of "+rhead
+
 			CSaveString( rhead,module.cacheDir+"_r.h" )
 			
 			srcs.Push( module.rfile )
@@ -410,8 +416,10 @@ Class GccBuildProduct Extends BuildProduct
 
 '		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cacheDir ) )
 		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cfileDir ) )
-'		If rfile And opts.reflection obj+="_r"
-		If rfile obj+="_r"
+
+		If rfile And opts.reflection obj+="_r"
+' simon was here			
+'		If rfile obj+="_r"
 			
 		obj+=opts.toolchain="msvc" ? ".obj" Else ".o"
 	
@@ -493,10 +501,7 @@ Class GccBuildProduct Extends BuildProduct
 
 			If isasm
 				cmd+=" -Fo~q"+obj+"~q ~q"+src+"~q"
-		' simon come here			
-				Local fstderr:=AllocTmpFile( "stderr" )
-				Assemble(cmd,fstderr)
-'				Exec( cmd,opts.toolchain="msvc" )
+				Assemble(cmd)
 				Return obj
 			Endif
 			
@@ -508,11 +513,7 @@ Class GccBuildProduct Extends BuildProduct
 			
 			If opts.verbose>2 Print cmd
 				
-			' simon come here
-			Local fstderr:=AllocTmpFile( "stderr" )			
-
-			Local fail:=Compile(cmd,fstderr)			
-			
+			Local fail:=Compile(cmd)						
 			
 			If fail
 				Throw New BuildEx( "compiler failure code "+fail )
@@ -521,16 +522,15 @@ Class GccBuildProduct Extends BuildProduct
 '			If Compile(cmd,fstderr)			
 			' If system( cmd+" 2>"+fstderr )
 
-				Local buf:=New StringStack
-				For Local line:=Eachin LoadString( fstdout,True ).Split( "~n" )
-					If Not line.StartsWith( "Note: including file:" ) buf.Add( line )
-				Next
+'				Local buf:=New StringStack
+'				For Local line:=Eachin LoadString( fstdout,True ).Split( "~n" )
+'					If Not line.StartsWith( "Note: including file:" ) buf.Add( line )
+'				Next
 				
-				Local err:="System command failed:~n~n"+cmd+"~n~n"+buf.Join( "~n" )+"~n"
+'				Local err:="System command failed:~n~n"+cmd+"~n~n"+buf.Join( "~n" )+"~n"				
+'				err+=LoadString( fstderr,True )
 				
-				err+=LoadString( fstderr,True )
-				
-				Throw New BuildEx( err )
+'				Throw New BuildEx( err )
 				
 			Endif
 			
@@ -566,9 +566,8 @@ Class GccBuildProduct Extends BuildProduct
 		cmd+=" -o ~q"+obj+"~q ~q"+src+"~q"
 
 		' simon come here			
-		Local fstderr:=AllocTmpFile( "stderr" )
 
-		Compile(cmd,fstderr)
+		Local result:=Compile(cmd)
 		' Exec( cmd )
 			
 		Return obj
@@ -630,16 +629,16 @@ Class GccBuildProduct Extends BuildProduct
 '			cmd="lib -out:~q"+output+"~q @~q"+tmp+"~q"
 			cmd="lib -out:~q"+output+"~q "+args
 '			Print "args="+args.Replace("~q ~q", "~q~n~q")
-			Print "cmd="+cmd
+'			Print "cmd="+cmd
 
 		Else
 
 #If __TARGET__="windows"			
 
-			Local tmp:=AllocTmpFile( "libFiles" )
-			SaveString( args,tmp )
-			
-			cmd=AR_CMD+" q ~q"+output+"~q @~q"+tmp+"~q"
+			cmd=AR_CMD+" q ~q"+output+"~q"+args
+'			Local tmp:=AllocTmpFile( "libFiles" )
+'			SaveString( args,tmp )			
+'			cmd=AR_CMD+" q ~q"+output+"~q @~q"+tmp+"~q"
 			
 #Else
 			cmd=AR_CMD+" q ~q"+output+"~q"+args
@@ -759,10 +758,11 @@ Class GccBuildProduct Extends BuildProduct
 		lnkFiles+=" "+LIB_FILES.Join( " " )
 		
 #If __TARGET__="windows"
-		lnkFiles=lnkFiles.Replace( " -Wl,"," " )
-		Local tmp:=AllocTmpFile( "lnkFiles" )
-		SaveString( lnkFiles,tmp )
-		cmd+=" @"+tmp
+		cmd+=lnkFiles
+'		lnkFiles=lnkFiles.Replace( " -Wl,"," " )
+'		Local tmp:=AllocTmpFile( "lnkFiles" )
+'		SaveString( lnkFiles,tmp )
+'		cmd+=" @"+tmp
 #Else
 		cmd+=lnkFiles
 #Endif
@@ -771,8 +771,12 @@ Class GccBuildProduct Extends BuildProduct
 		CopyAssets( assetsDir )
 		
 		CopyDlls( dllsDir )
-		
-		Exec( cmd,opts.toolchain="msvc" )
+
+' simon was here		
+'		Exec( cmd,opts.toolchain="msvc" )
+
+		Local result:=Link(cmd)
+		If result Print "Link failure result "+result
 		
 		If opts.target="emscripten"
 			If opts.appType="wasm"

@@ -35,6 +35,8 @@ Class BuildOpts
 	
 	Field makedocs:bool
 	
+	Field reflection:Bool 'simon was here
+	
 End
 
 Class BuilderInstance
@@ -497,7 +499,7 @@ Class BuilderInstance
 		
 		translator.TranslateModule( module )
 
-		translator.TranslateTypeInfo( module )
+'		translator.TranslateTypeInfo( module )
 	End
 	
 	Method GetNamespace:NamespaceScope( path:String,mustExist:Bool=False )

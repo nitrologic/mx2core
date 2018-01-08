@@ -38,6 +38,7 @@ Class Transpiler
 		Local opts:=New BuildOpts	
 		opts.toolchain="msvc"
 		opts.target="windows"
+		opts.arch="x64"
 		opts.config="release"
 		Return opts
 	End
@@ -123,7 +124,7 @@ Class Transpiler
 		
 		opts.mainSource=srcPath
 		
-		Print "Making app '"+opts.mainSource+"' ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+")"
+		Print "Making app '"+opts.mainSource+"' ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+" "+opts.productType+")"
 	
 		New BuilderInstance( compiler, opts )
 		
