@@ -33,7 +33,7 @@ Class VisualStudio Implements mx2.Toolchain
 		Return about
 	End
 
-	Method CLHelp:String()
+	Method Help:String()
 		Local temp:=TempPath + "\getcl.txt"
 		Local result:=Invoke("cl -help > ~q"+temp+"~q 2>&1")
 		If result Return ""
@@ -44,7 +44,7 @@ Class VisualStudio Implements mx2.Toolchain
 
 	Method About:String()
 '[]		Local info:=CLAbout()
-		Local info:=CLHelp()
+		Local info:=Help()
 '		Local lines:=info.Split("~r~n")
 '		If lines.Length Return lines[0]
 		Return info
@@ -90,9 +90,9 @@ End
 
 Class GCC Implements mx2.Toolchain
 		
-	Property Compiler:String()
+	method Help:String()
 		Local temp:=TempPath + "/g++version.txt"
-		Local cmd:="g++ --version > ~q"+temp+"~q 2>&1"
+		Local cmd:="g++ --help > ~q"+temp+"~q 2>&1"
 		Local result:=libc.system(cmd)
 		If result 
 			print cmd+" returned "+result
@@ -145,7 +145,8 @@ Function Main()
 #endif
 
 '	Print "Toolchain:"+cl.About()
-	Print "Toolchain:"+cl.Compiler
+'	Print "Toolchain:"+cl.Compiler
+	Print "Toolchain:"+cl.Help()
 End
 
 Function BuildAll(cl:mx2.Toolchain)
