@@ -13,11 +13,14 @@ original source courtesy blitz-research 3 January 2018
 
 # todo
 
+* daytime style for ted2go
 * Integrate loader, ted2go, mx2cc and steamworks into single mojolab application.
 * Provide lab guidance for installing and using MSVC.
 
 # history
 
+* build all with zero conf vs140 transpiler module
+* remove module manager
 * Use VS140COMNTOOLS environment variable to configure mx2cc.
 * remove irc
 * start mojolab root app

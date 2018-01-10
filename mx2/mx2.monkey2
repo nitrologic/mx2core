@@ -2,12 +2,11 @@
 
 #Import "process.monkey2"
 
-#if __TARGET__="macos"
-Global TempPath:="/tmp"
-Global ToolPath:="/tmp"
-#else
+#if __TARGET__="windows"
 Global TempPath:=std.filesystem.GetEnv("TEMP")
 Global ToolPath:=std.filesystem.GetEnv("VS140COMNTOOLS")
+#else
+Global TempPath:="/tmp"
 #endif
 
 Class VisualStudio Implements mx2.Toolchain
@@ -88,12 +87,13 @@ Class VisualStudio Implements mx2.Toolchain
 '		Return result
 	
 End
-	
-Class Xcode Implements mx2.Toolchain
+
+
+Class GCC Implements mx2.Toolchain
 		
 	Property Compiler:String()
 		Local temp:=TempPath + "\getcl.txt"
-		Local cmd:="call ~q"+ToolPath+"VsDevCmd.bat~q && (cl > ~q"+temp+"~q 2>&1)"
+		Local cmd:="g++ --version > ~q"+temp+"~q 2>&1"
 		Local result:=libc.system(cmd)
 		If result Return ""
 		Return std.stringio.LoadString(temp.Replace("\","/"))
@@ -116,24 +116,6 @@ Class Xcode Implements mx2.Toolchain
 	End
 End
 
-Function MacMain()
-	
-	Print std.filesystem.AppDir()
-	Print std.filesystem.CurrentDir()
-
-	Local cl:=New Xcode()
-
-	Local mx2:=New mx2cc.Transpiler(cl,TempPath)
-	
-'	Local home:="/Users/simon/monkey2/modules/"
-	Local home:=std.filesystem.AppDir()+"../../../modules/"	
-		
-	Local dirs:=New String[](home)
-	Local args:=New String[]("std","libc","monkey","transpiler")
-
-	mx2.MakeMods(dirs,args)
-End
-
 Function ModulePaths:String[](path:String)
 	Local result:=New std.collections.List<String>
 	result.Add(path+"modules/")
@@ -153,13 +135,21 @@ End
 
 
 Function Main()
-	
-	Local cl:=New VisualStudio()
-	Print "Toolchain:"+cl.About()
 
+#if __TARGET__="windows"	
+	Local cl:=New VisualStudio()
+#else
+	Local cl:=New GCC()
+#endif
+
+	Print "Toolchain:"+cl.About()
+End
+
+Function BuildAll(cl:mx2.Toolchain)
 	Local mx2:=New mx2cc.Transpiler(cl,TempPath)
 
 	Local mx2Path:=MonkeyPath(std.filesystem.AppDir())	
+
 	Local modulePaths:=ModulePaths(mx2Path)
 
 '	std.filesystem.ChangeDir(mx2Path)
@@ -170,13 +160,32 @@ Function Main()
 '	Local home:="/Users/simon/monkey2/modules/"
 '	Local home:=std.filesystem.AppDir()+"../../../modules/"	
 		
-'	Local modules:=New String[]("monkey","libc","std","transpiler")
-	Local modules:=New String[]("monkey","libc","std")
+	Local modules:=New String[]("monkey","libc","std","transpiler")
+'	Local modules:=New String[]("monkey","libc","std")
 
-	Local src:=mx2Path+"mx2/hello.monkey2"
+	Local src:=mx2Path+"mx2/mx2.monkey2"
 	Local appargs:=New String[](src)
 
 '	mx2.MakeMods(modulePaths,modules)
+	mx2.MakeApp(modulePaths,appargs)	
 
-	mx2.MakeApp(modulePaths,appargs)
+
+End
+
+
+Function MacMain()
+	
+	Print std.filesystem.AppDir()
+	Print std.filesystem.CurrentDir()
+
+	Local cl:=New GCC()
+	Local mx2:=New mx2cc.Transpiler(cl,TempPath)
+	
+'	Local home:="/Users/simon/monkey2/modules/"
+	Local home:=std.filesystem.AppDir()+"../../../modules/"	
+		
+	Local dirs:=New String[](home)
+	Local args:=New String[]("std","libc","monkey","transpiler")
+
+	mx2.MakeMods(dirs,args)
 End
