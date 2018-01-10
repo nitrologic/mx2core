@@ -1,12 +1,11 @@
 #Import "<transpiler>"
 
-#Import "process.monkey2"
-
 #if __TARGET__="windows"
 Global TempPath:=std.filesystem.GetEnv("TEMP")
 Global ToolPath:=std.filesystem.GetEnv("VS140COMNTOOLS")
 #else
 Global TempPath:="/tmp"
+Global ToolPath:="."
 #endif
 
 Class VisualStudio Implements mx2.Toolchain
@@ -20,7 +19,7 @@ Class VisualStudio Implements mx2.Toolchain
 	Method Invoke:Int(command:String)
 		Local vsdevcmd:=ToolPath+"VsDevCmd.bat"
 		Local cmd:="call ~q"+vsdevcmd+"~q && ("+command+")"
-		Local result:=Process.Invoke(cmd)
+		Local result:=libc.system(cmd)
 '		If result Print cmd + " returned " + result
 		Return result
 	End	
@@ -92,11 +91,14 @@ End
 Class GCC Implements mx2.Toolchain
 		
 	Property Compiler:String()
-		Local temp:=TempPath + "\getcl.txt"
+		Local temp:=TempPath + "/g++version.txt"
 		Local cmd:="g++ --version > ~q"+temp+"~q 2>&1"
 		Local result:=libc.system(cmd)
-		If result Return ""
-		Return std.stringio.LoadString(temp.Replace("\","/"))
+		If result 
+			print cmd+" returned "+result
+			return ""
+		endif
+		Return std.stringio.LoadString(temp)
 	End
 	
 	Method About:String()		
@@ -142,7 +144,8 @@ Function Main()
 	Local cl:=New GCC()
 #endif
 
-	Print "Toolchain:"+cl.About()
+'	Print "Toolchain:"+cl.About()
+	Print "Toolchain:"+cl.Compiler
 End
 
 Function BuildAll(cl:mx2.Toolchain)

@@ -223,8 +223,7 @@ Function SHA256:String( in:String )
 		Local w:=data.Slice(chunkStart,chunkStart+16).Resize(64)
     
 		For Local i:Int=16 To 63
-			w[i] = w[i - 16] + (Ror(w[i - 15], 7) ~ Ror(w[i - 15], 18) ~ ( UShr(w[i - 15],3) ))+
-            w[i - 7] + (Ror(w[i - 2], 17) ~ Ror(w[i - 2], 19) ~ ( UShr(w[i - 2],10) ))
+			w[i] = w[i - 16] + (Ror(w[i - 15], 7) ~ Ror(w[i - 15], 18) ~ ( UShr(w[i - 15],3) )) + w[i - 7] + (Ror(w[i - 2], 17) ~ Ror(w[i - 2], 19) ~ ( UShr(w[i - 2],10) ))
 		Next
     
 		For Local i:Int=0 To 63
