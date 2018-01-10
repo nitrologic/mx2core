@@ -65,7 +65,7 @@ Class BuildProduct
 			
 		Local srcs:=New StringStack
 
-		If opts.productType="app" And opts.reflection
+		If opts.productType="app" 'And opts.reflection
 
 			CC_OPTS+=" -DBB_NEWREFLECTION"
 			CPP_OPTS+=" -DBB_NEWREFLECTION"			
@@ -627,7 +627,8 @@ Class GccBuildProduct Extends BuildProduct
 '			Local tmp:=AllocTmpFile( "libFiles" )
 '			SaveString( args,tmp )			
 '			cmd="lib -out:~q"+output+"~q @~q"+tmp+"~q"
-			cmd="lib -out:~q"+output+"~q "+args
+'			cmd="lib -out:~q"+output+"~q "+args
+			cmd=AR_CMD+" -out:~q"+output+"~q "+args
 '			Print "args="+args.Replace("~q ~q", "~q~n~q")
 '			Print "cmd="+cmd
 

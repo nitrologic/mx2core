@@ -181,7 +181,7 @@ Function MakeApp:Bool( args:String[] )
 	opts.clean=False
 	opts.fast=True
 	opts.verbose=0
-	opts.passes=5
+	opts.passes=4	'no run no run
 	
 	args=ParseOpts( opts,args )
 	

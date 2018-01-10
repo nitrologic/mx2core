@@ -105,7 +105,7 @@ Class Transpiler
 		opts.clean=False
 		opts.fast=True
 		opts.verbose=0
-		opts.passes=5
+		opts.passes=4
 		
 		args=ParseOpts( opts,args )		
 		If args.Length<>1 
