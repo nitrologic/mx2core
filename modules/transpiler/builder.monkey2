@@ -35,8 +35,6 @@ Class BuildOpts
 	
 	Field makedocs:bool
 	
-	Field reflection:Bool 'simon was here
-	
 End
 
 Class BuilderInstance
@@ -204,8 +202,8 @@ Class BuilderInstance
 			Local path:=MX2_SRCS.Pop()
 			
 			If opts.verbose>0 Print "Parsing "+path
-			
-			Local ident:=module.ident+"_"+MungPath( MakeRelativePath( StripExt( path ),module.baseDir ) )
+				
+			Local ident:=module.ident+"_"+Identize( MakeRelativePath( StripExt( path ),module.baseDir ) )
 			
 			Local parser:=New Parser
 			
@@ -499,7 +497,7 @@ Class BuilderInstance
 		
 		translator.TranslateModule( module )
 
-'		translator.TranslateTypeInfo( module )
+		translator.TranslateTypeInfo( module )
 	End
 	
 	Method GetNamespace:NamespaceScope( path:String,mustExist:Bool=False )

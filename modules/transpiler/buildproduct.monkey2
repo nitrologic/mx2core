@@ -65,7 +65,7 @@ Class BuildProduct
 			
 		Local srcs:=New StringStack
 
-		If opts.productType="app" 'And opts.reflection
+		If opts.productType="app"
 
 			CC_OPTS+=" -DBB_NEWREFLECTION"
 			CPP_OPTS+=" -DBB_NEWREFLECTION"			
@@ -85,8 +85,6 @@ Class BuildProduct
 			
 			Local rhead:=buf.Join( "~n" )
 			
-			Print "saving to "+module.cacheDir+"_r.h rhead of "+rhead
-
 			CSaveString( rhead,module.cacheDir+"_r.h" )
 			
 			srcs.Push( module.rfile )
@@ -103,7 +101,7 @@ Class BuildProduct
 		Next
 		
 		srcs.AddAll( SRC_FILES )
-
+		
 		Build( srcs )
 	End
 	
@@ -325,6 +323,9 @@ Class GccBuildProduct Extends BuildProduct
 			
 			CC_CMD= "cl -c"
 			CXX_CMD="cl -c"
+
+' ml64 /nologo /Cp /Cx /Zp4 /DBOOST_CONTEXT_EXPORT= /Fo $(IntDir)%(Filename).obj /c %(FullPath) 
+			
 			AS_CMD=opts.arch="x64" ? "ml64 -c" Else "ml -c"
 			AR_CMD="lib"
 			LD_CMD="link"
@@ -411,16 +412,10 @@ Class GccBuildProduct Extends BuildProduct
 			
 			isasm=True
 		End
-					
-		Local rfile:=src.EndsWith( "/_r.cpp" )
-
-'		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cacheDir ) )
+			
 		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cfileDir ) )
 
-		If rfile And opts.reflection obj+="_r"
-
-' simon was here and is confused
-		If rfile obj+="_r"
+		If src.EndsWith( "/_r.cpp" ) obj+="_r"
 			
 		obj+=opts.toolchain="msvc" ? ".obj" Else ".o"
 	

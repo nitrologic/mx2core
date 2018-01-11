@@ -15,6 +15,7 @@ Class VisualStudio Implements mx2.Toolchain
 		std.filesystem.SetEnv("MX2_CPP_OPTS_MSVC","-EHsc -W0 -MT -utf-8")
 		std.filesystem.SetEnv("MX2_CPP_OPTS_MSVC_DEBUG","-O1")
 		std.filesystem.SetEnv("MX2_CPP_OPTS_MSVC_RELEASE","-O2 -DNDEBUG")
+		std.filesystem.SetEnv("MX2_AS_OPTS_MSVC","/DBOOST_CONTEXT_EXPORT=")
 	End
 		
 	Method Invoke:Int(command:String)
@@ -79,7 +80,7 @@ Class VisualStudio Implements mx2.Toolchain
 
 	Method Archive:Int(cmd:String)
 '		Print "ARCHIVING:"+cmd
-		Return Invoke(cmd)
+		Return Invoke(cmd+">2")
 	End
 
 '		Local result:=system( cmd+" 2>"+fstderr )			
@@ -148,26 +149,33 @@ Function Main()
 #else
 	Local cl:=New GCC()
 #endif
+	Local mx2:=New mx2cc.Transpiler(cl,TempPath)
 
-'	Print "Toolchain:"+cl.About()
-'	Print "Toolchain:"+cl.Compiler
-'	Print "Toolchain:"+cl.Help()
-	BuildAll(cl)
+'	Print "AppDir="+std.filesystem.AppDir()
+'	Print "CurrentDir="+std.filesystem.CurrentDir()
+
+	Local args:=std.filesystem.AppArgs()
+	If args.Length<2
+		Print mx2.About
+		Return
+	Endif		
+	Local command:=args[1]	
+	
+	Build(mx2,command)
 End
 
-Function BuildAll(cl:mx2.Toolchain)
-	Local mx2:=New mx2cc.Transpiler(cl,TempPath)
+Function Build(mx2:mx2cc.Transpiler,command:String)
 	Local mx2Path:=MonkeyPath(std.filesystem.AppDir())	
 	Local modulePaths:=ModulePaths(mx2Path)
 
-	Print "AppDir="+std.filesystem.AppDir()
-	Print "CurrentDir="+std.filesystem.CurrentDir()
-		
-	Local modules:=New String[]("monkey","libc","std","transpiler")
+	Select command		
+		Case "makemods"
+			Local modules:=New String[]("monkey","libc","std","transpiler")
+			mx2.MakeMods(modulePaths,modules)
 
-	Local src:=mx2Path+"mx2/mx2.monkey2"
-	Local appargs:=New String[](src)
-
-	mx2.MakeMods(modulePaths,modules)
-	mx2.MakeApp(modulePaths,appargs)	
+		Case "makeapp"
+			Local src:=mx2Path+"mx2/mx2.monkey2"
+			Local appargs:=New String[](src)
+			mx2.MakeApp(modulePaths,appargs)
+	End	
 End

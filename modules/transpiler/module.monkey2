@@ -45,7 +45,7 @@ Class Module
 		Self.name=name
 		Self.srcPath=srcPath
 		
-		ident=MungPath( name )
+		ident=Identize( name )
 		
 		baseDir=ExtractDir( srcPath )
 		
@@ -54,9 +54,6 @@ Class Module
 		outputDir=buildDir+profile+"/"
 		
 		cacheDir=outputDir+"build/"
-
-' simon come here		
-'		Print "************* cacheDir:"+cacheDir
 
 		hfileDir=outputDir+"include/"
 		

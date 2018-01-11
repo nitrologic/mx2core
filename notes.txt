@@ -1,3 +1,14 @@
+MX2 ERROR call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\..\..\VC\vcvarsall.bat" x64 && (ml64 -c   -Fo"C:/nitrologic/mx2core/modules/std/std.buildv1.1.09/windows_release_msvc_x64/build/_1_1_1fiber_2native_2asm_2ontop_0x86_064_0ms_0pe_0masm.asm.obj" "C:/nitrologic/mx2core/modules/std/fiber/native/asm/ontop_x86_64_ms_pe_masm.asm" > "C:\Users\simon\AppData\Local\Temp\as.txt" 2>&1) returned 1
+ Assembling: C:/nitrologic/mx2core/modules/std/fiber/native/asm/ontop_x86_64_ms_pe_masm.asm
+C:/nitrologic/mx2core/modules/std/fiber/native/asm/ontop_x86_64_ms_pe_masm.asm(87
+ : error A2008:syntax error : FRAME
+C:/nitrologic/mx2core/modules/std/fiber/native/asm/ontop_x86_64_ms_pe_masm.asm(88
+ : warning A4020:directive ignored outside a procedure
+C:/nitrologic/mx2core/modules/std/fiber/native/asm/ontop_x86_64_ms_pe_masm.asm(206) size
+ : fatal error A1010:unmatched block nesting : ontop_fcontext
+
+
+
 Build error: System command failed:
 
 cl -c -EHs -W0 -MT -utf-8 -O2 -DNDEBUG -I"C:/nitrologic/mx2core/modules/" -I"C:/nitrologic/mx2core/modules/monkey/native" -I"C:/nitrologic/mx2core/mx2/" -DBB_NEWREFLECTION -I"C:/nitrologic/mx2core/mx2/hello.buildv1.1.09/windows_release_msvc/build/" -showIncludes -Fo"C:/nitrologic/mx2core/mx2/hello.buildv1.1.09/windows_release_msvc/build/_1include_2_0r.cpp_r.obj" "C:/nitrologic/mx2core/mx2/hello.buildv1.1.09/windows_release_msvc/include/_r.cpp" >tmp/stdout1.txt

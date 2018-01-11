@@ -31,6 +31,14 @@ Const TestArgs:="mx2cc makeapp -clean -config=debug src/mx2cc/test.monkey2"
 
 Class Transpiler
 	
+	Property Version:String()
+		Return MX2CC_VERSION+MX2CC_VERSION_EXT
+	End
+	
+	Property About:String()
+		Return "mx2 transpiler version "+Version
+	End
+	
 	Field tempDir:String
 	Field compiler:Toolchain
 
@@ -50,11 +58,7 @@ Class Transpiler
 		GCSetTrigger( 128*1024*1024 )
 		ModDirs()
 	End
-			
-	Method Version:String()
-		Return MX2CC_VERSION+MX2CC_VERSION_EXT
-	End
-				
+							
 	Method ModDirs()
 		Local moddirs:=New StringStack
 		moddirs.Add( CurrentDir()+"modules/" )
@@ -124,7 +128,7 @@ Class Transpiler
 		
 		opts.mainSource=srcPath
 		
-		Print "Making app '"+opts.mainSource+"' ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+" "+opts.productType+")"
+		Print "Making app "+opts.mainSource+" ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+" "+opts.productType+")"
 	
 		New BuilderInstance( compiler, opts )
 		
@@ -196,7 +200,7 @@ Class Transpiler
 				Continue
 			Endif
 		
-			Print "Building "+modid+" ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+")"
+			Print "Making module "+modid+" ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+")"
 			
 			opts.mainSource=RealPath( path )
 			opts.target=target
