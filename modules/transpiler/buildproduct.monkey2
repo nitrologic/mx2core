@@ -418,8 +418,9 @@ Class GccBuildProduct Extends BuildProduct
 		Local obj:=module.cacheDir+MungPath( MakeRelativePath( src,module.cfileDir ) )
 
 		If rfile And opts.reflection obj+="_r"
-' simon was here			
-'		If rfile obj+="_r"
+
+' simon was here and is confused
+		If rfile obj+="_r"
 			
 		obj+=opts.toolchain="msvc" ? ".obj" Else ".o"
 	

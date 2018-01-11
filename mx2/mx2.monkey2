@@ -78,7 +78,7 @@ Class VisualStudio Implements mx2.Toolchain
 	End
 
 	Method Archive:Int(cmd:String)
-		Print "ARCHIVING:"+cmd
+'		Print "ARCHIVING:"+cmd
 		Return Invoke(cmd)
 	End
 

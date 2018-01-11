@@ -109,11 +109,11 @@ Class AudioData Extends Resource
 	#end
 	Function Load:AudioData( path:String )
 	
-		Select ExtractExt( path ).ToLower()
-		Case ".wav" Return LoadAudioData_WAV( path )
-' TODO moving to pub		
+' simon come here	
+'		Select filesystem.ExtractExt( path ).ToLower()
+'		Case ".wav" Return LoadAudioData_WAV( path )
 '		Case ".ogg" Return LoadAudioData_OGG( path )
-		End
+'		End
 		
 		Return Null
 	End

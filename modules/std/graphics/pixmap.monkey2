@@ -505,7 +505,7 @@ Class Pixmap Extends Resource
 	
 	#End
 	Method Save:Bool( path:String )
-'TODO moving to pub
+' simon come here moving to pub
 '		Return SavePixmap( Self,path )
 		Return false
 	End
@@ -564,7 +564,8 @@ Class ResourceManager Extension
 
 	Method OpenPixmap:Pixmap( path:String,format:PixelFormat=Null,pmAlpha:Bool=False )
 	
-		Local slug:="Pixmap:name="+StripDir( StripExt( path ) )+"&format="+Int( format )+"&pmAlpha="+Int( pmAlpha )
+		Local name:=filesystem.StripDir( filesystem.StripExt( path ) )
+		Local slug:="Pixmap:name="+name+"&format="+Int( format )+"&pmAlpha="+Int( pmAlpha )
 
 		Local pixmap:=Cast<Pixmap>( OpenResource( slug ) )
 		If pixmap Return pixmap

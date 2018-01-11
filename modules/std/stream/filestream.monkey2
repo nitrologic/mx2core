@@ -1,8 +1,6 @@
 
 Namespace std.stream
 
-using std.filesystem
-
 Using libc
 
 #rem monkeydoc FileStream class.
@@ -117,7 +115,7 @@ Class FileStream Extends Stream
 			Return Null
 		End
 		
-		path=RealPath( path )
+		path=filesystem.RealPath( path )
 		
 		Local file:=fopen( path,mode )
 		If Not file Return Null
