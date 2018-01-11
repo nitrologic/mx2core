@@ -200,7 +200,7 @@ Class Transpiler
 				Continue
 			Endif
 		
-			Print "Making module "+modid+" ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+")"
+			Print "Making "+modid+" ("+opts.target+" "+opts.config+" "+opts.arch+" "+opts.toolchain+")"
 			
 			opts.mainSource=RealPath( path )
 			opts.target=target
