@@ -136,6 +136,23 @@ End
 
 Class GCC Implements mx2.Toolchain
 
+	Method New()
+		std.filesystem.SetEnv("MX2_APP_DIR_FRAMEWORK","../Frameworks")
+		std.filesystem.SetEnv("MX2_LD_OPTS_MACOS","-mmacosx-version-min=10.9 -Wl,-rpath,@executable_path -Wl,-rpath,@executable_path/../Frameworks")
+		std.filesystem.SetEnv("MX2_LD_OPTS_MACOS_RELEASE","-O3")
+		std.filesystem.SetEnv("MX2_CPP_OPTS_MACOS","-std=c++14 -mmacosx-version-min=10.9 -Wno-deprecated-declarations -Wno-tautological-pointer-compare -Wno-undefined-bool-conversion -Wno-int-to-void-pointer-cast -Wno-inconsistent-missing-override -Wno-logical-op-parentheses -Wno-parentheses-equality")
+		std.filesystem.SetEnv("MX2_CPP_OPTS_MACOS_RELEASE","-O3 -DNDEBUG")
+		std.filesystem.SetEnv("MX2_CC_OPTS_MACOS","-std=gnu99 -mmacosx-version-min=10.9 -Wno-deprecated-declarations -Wno-tautological-pointer-compare -Wno-undefined-bool-conversion -Wno-int-to-void-pointer-cast -Wno-inconsistent-missing-override -Wno-logical-op-parentheses -Wno-parentheses-equality")
+		std.filesystem.SetEnv("MX2_CC_OPTS_MACOS_RELEASE","-O3 -DNDEBUG")
+	End
+	
+	Method Debug()	
+	end
+
+	Method About:String()
+		return "GCC"
+	end
+
 	Method Invoke:Int(command:String)
 		Local result:=libc.system(command)
 		If result Print command + " returned " + result

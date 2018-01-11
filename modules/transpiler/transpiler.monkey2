@@ -44,8 +44,13 @@ Class Transpiler
 
 	Function DefaultOpts:BuildOpts()
 		Local opts:=New BuildOpts	
+#if __TARGET__="windows"
 		opts.toolchain="msvc"
 		opts.target="windows"
+#else
+		opts.toolchain="gcc"
+		opts.target="macos"
+#endif
 		opts.arch="x64"
 		opts.config="release"
 		Return opts
