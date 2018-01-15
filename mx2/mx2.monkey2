@@ -1,5 +1,5 @@
 #Import "<transpiler>"
-#Import "process"
+#Import "<std>"
 
 #if __TARGET__="windows"
 Global TempPath:=std.filesystem.GetEnv("TEMP")
@@ -9,7 +9,9 @@ Global TempPath:="/tmp"
 Global VS140Path:="."
 #endif
 
-Alias Task:ted2go.ProcessReader
+'Alias Task:ted2go.ProcessReader
+
+Alias Task:std.process.ProcessStream
 
 Class ProcessStack
 
@@ -22,21 +24,22 @@ Class ProcessStack
 	Field core:=New std.collections.List<Task>
 
 	Method Execute:Int(command:String)
-		If core.Count()<4
-			Local process:=New Task()
-			core.Add(process)
-			process.Finished=Lambda(name:String,result:Int)
-Print "*"
-'				Print "Process "+name+" finished with result "+result
-				If commands.Count()
+		If core.Count()<12
+			New std.fiber.Fiber( Lambda()				
+				Local task:=Task.Open(command,"r")
+				Local buffer:=New std.memory.DataBuffer(8192)
+				While True
+					While True
+						Local n:=task.Read( buffer.Data,8192 )
+						If n=0 Exit
+						Print buffer.PeekString(0,n).Trim()
+					Wend
+					If commands.Count()=0 Exit
 					Local cmd:=commands.RemoveFirst()
-					process.RunAsync(cmd)
-'					Execute(cmd)
-				Else
-					core.Remove(process)
-				Endif
-			End					
-			process.RunAsync(command)
+					Print "ProcessStack: launching "+cmd
+					task=Task.Open(cmd,"r")
+				Wend
+			End)			
 		Else
 			commands.AddLast(command)
 		Endif		
@@ -200,6 +203,7 @@ Function Main()
 '	Print "CurrentDir="+std.filesystem.CurrentDir()
 
 	Build(mx2,"makemods")
+	Build(mx2,"makeapp")
 
 	cl.Debug()
 
@@ -210,8 +214,10 @@ Function Main()
 		Return
 	Endif		
 	Local command:=args[1]	
-	
+
 	Build(mx2,command)
+	
+	Print "Complete"
 	
 End
 

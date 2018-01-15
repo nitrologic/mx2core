@@ -14,8 +14,8 @@ original source courtesy blitz-research 3 January 2018
 # todo
 
 * daytime style for ted2go
-* Integrate loader, ted2go, mx2cc and steamworks into single mojolab application.
-* Provide lab guidance for installing and using MSVC.
+* Integrate loader, ted2go, mx2cc and steamworks into single mojolab application sandbox.
+* Lab guidance for installing and using MSVC.
 
 # history
 
